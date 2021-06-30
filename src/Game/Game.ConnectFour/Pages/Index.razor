@@ -1,0 +1,189 @@
+﻿@page "/"
+
+@using ConnectFour.Data;
+
+<h1>Hellü</h1>
+
+@code
+{
+    GameBoard board = new GameBoard();
+    PieceColors currentTurn = PieceColors.Red;
+
+    WinningPlay winningPlay;
+
+    private void PieceClicked(int x, int y)
+    {
+        if (winningPlay != null) return;
+        Console.WriteLine($"Cliecked x:{x}, y:{y}");
+        GamePiece clickedSpace = board.Board[x, y];
+
+        if (clickedSpace.Color == PieceColors.Blank)
+        {
+            while (y < Constants.DIMENSION_Y - 1)
+            {
+                y++;
+                GamePiece nextSpace = board.Board[x, y];
+                if (nextSpace.Color == PieceColors.Blank)
+                {
+                    clickedSpace = nextSpace;
+                }
+            }
+            clickedSpace.Color = currentTurn;
+        }
+
+        winningPlay = GetWinner();
+        if (winningPlay == null)
+            SwitchTurn();
+
+    }
+
+    private void SwitchTurn()
+    {
+        if (currentTurn == PieceColors.Red)
+            currentTurn = PieceColors.Yellow;
+        else
+            currentTurn = PieceColors.Red;
+    }
+
+    private WinningPlay GetWinner()
+    {
+        WinningPlay winningPlay = null;
+
+        for (int i = 0; i < Constants.DIMENSION_X; i++)
+        {
+            for (int j = 0; j < Constants.DIMENSION_Y; j++)
+            {
+                winningPlay = EvaluatePieceForWinner(i, j, EvaluationDirections.Up);
+                if (winningPlay != null) return winningPlay;
+
+                winningPlay = EvaluatePieceForWinner(i, j, EvaluationDirections.UpRight);
+                if (winningPlay != null) return winningPlay;
+
+                winningPlay = EvaluatePieceForWinner(i, j, EvaluationDirections.Right);
+                if (winningPlay != null) return winningPlay;
+
+                winningPlay = EvaluatePieceForWinner(i, j, EvaluationDirections.DownRight);
+                if (winningPlay != null) return winningPlay;
+            }
+        }
+        return winningPlay;
+    }
+
+    private WinningPlay EvaluatePieceForWinner(int x, int y, EvaluationDirections dir)
+    {
+        GamePiece currentPiece = board.Board[x, y];
+        if (currentPiece.Color == PieceColors.Blank) return null;
+
+        int inARow = 1;
+        int xNext = x;
+        int yNext = y;
+        //Console.WriteLine($"0 x:{xNext}, y:{yNext}");
+        var winningMoves = new List<string>();
+
+        while (inARow < Constants.EVALUATE_COUNTER)
+        {
+            switch (dir)
+            {
+                case EvaluationDirections.Up:
+                    yNext--;
+                    break;
+                case EvaluationDirections.UpRight:
+                    xNext++;
+                    yNext--;
+                    break;
+                case EvaluationDirections.Right:
+                    xNext++;
+                    break;
+                case EvaluationDirections.DownRight:
+                    xNext++;
+                    yNext++;
+                    break;
+            }
+            if (xNext < Constants.START_DIMENSION_X || xNext >= Constants.DIMENSION_X || yNext < Constants.START_DIMENSION_Y || yNext >= Constants.DIMENSION_Y) break;
+            if (board.Board[xNext, yNext].Color == currentPiece.Color)
+            {
+                Console.WriteLine($"Add x:{xNext}, y:{yNext}");
+                winningMoves.Add($"{xNext},{yNext}");
+                inARow++;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        if (inARow >= Constants.EVALUATE_COUNTER)
+        {
+            Console.WriteLine($"Last x:{x}, y:{y}");
+            winningMoves.Add($"{x},{y}");
+            return new WinningPlay
+            {
+                WinningMoves = winningMoves,
+                WinningColor = currentPiece.Color,
+                WinningDirection = dir
+            };
+        }
+        return null;
+    }
+
+    private void Reset()
+    {
+        board = new GameBoard();
+        currentTurn = PieceColors.Red;
+        winningPlay = null;
+    }
+
+    private bool isGamePieceWinningPiece(WinningPlay winningPlay, int x, int y)
+    {
+        return winningPlay?.WinningMoves?.Contains($"{x},{y}") ?? false;
+    }
+}
+
+@if (winningPlay == null)
+{
+    <h2>@currentTurn's Turn!</h2>
+}
+else
+{
+    <h2>@winningPlay.WinningColor Wins! <button class="btn btn-success" @onclick="@(()=>Reset())">Reset</button></h2>
+
+    <p>
+        @foreach (var item in winningPlay.WinningMoves)
+        {
+            <span>@item - </span>
+        }
+    </p>
+}
+<div class="stage">
+    <div class="r">
+        <div class="dimansion_x_header">
+            @for (int i = 0; i < Constants.DIMENSION_Y; i++)
+            {
+                <strong>@i</strong>
+            }
+        </div>
+        <div class="c">
+            <div class="dimansion_y_header">
+                @for (int j = 0; j < Constants.DIMENSION_X; j++)
+                {
+                    <strong>@j</strong>
+                }
+            </div>
+            <div class="board">
+                @for (int i = 0; i < Constants.DIMENSION_X; i++)
+                {
+                    <div class="column">
+                        @for (int j = 0; j < Constants.DIMENSION_Y; j++)
+                        {
+
+                            int x = i;
+                            int y = j;
+
+                            <div class="gamepiece @board.Board[i, j].Color.ToString().ToLower()" @onclick="@(() => PieceClicked(x, y))" style="@(isGamePieceWinningPiece(winningPlay, i, j) ? "opacity: 0.6" : "")"></div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

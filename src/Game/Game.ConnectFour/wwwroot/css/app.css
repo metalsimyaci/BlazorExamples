@@ -1,0 +1,140 @@
+﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+
+html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+a, .btn-link {
+    color: #0366d6;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.content {
+    padding-top: 1.1rem;
+}
+
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+
+.invalid {
+    outline: 1px solid red;
+}
+
+.validation-message {
+    color: red;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+.stage {
+    display: flex;
+    flex-direction: row;
+    max-width: 500px;
+    align-items: flex-start;
+}
+.r {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+.dimansion_x_header {
+    background-color: gray;
+    display: flex;
+    flex-direction: column;
+    /*height: 490px;*/
+    width: 20px;
+    margin-top: 20px;
+    align-items: flex-start;
+}
+    .dimansion_x_header > strong {
+        min-height: 60px;
+        min-width: 10px;
+        color: red;
+        margin: 5px 0px 0px 0px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+ .dimansion_x_header > strong:last-child {
+     margin-bottom: 5px;
+ }
+.c {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.dimansion_y_header {
+    background-color: gray;
+    display: flex;
+    flex-direction: row;
+    height: 20px;
+}
+
+    .dimansion_y_header > strong {
+        min-width: 60px;
+        margin: 0 5px;
+        color: chartreuse;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+.board {
+    background-color: blue;
+    display: flex;
+    flex-direction: row;
+    max-width: 490px;
+    align-items: stretch;
+}
+
+  
+
+
+.column {
+    min-width: 60px;
+    min-height: 60px;
+    height: 100%;
+}
+
+.gamepiece {
+    border: solid 1px black;
+    margin: 5px;
+    min-height: 60px;
+    min-width: 60px;
+    border-radius: 50px;
+}
+
+.red {
+    background-color: red;
+}
+
+.yellow {
+    background-color: yellow;
+}
+
+.blank {
+    background-color: white;
+}
